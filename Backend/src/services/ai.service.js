@@ -52,19 +52,31 @@ If you don't have enough context, ask the user for the missing details.
 Your goal:
 To act as the user’s expert engineering partner—help them understand, fix, improve, and grow as a developer while maintaining professional-grade quality in all explanations.
 `;
+let chatHistory = [];
 
 async function generateResponse(prompt) {
+
     try {
+
+        if (chatHistory.length > 20) {
+            chatHistory.shift(); // remove oldest
+        }
+        // push user message to history
+        chatHistory.push({ role: "user", content: prompt });
         const response = await openai.chat.completions.create({
             model: 'longcat-flash-thinking', // Or the specific LongCat model you want to use
             messages: [
                 { role: 'system', content: SYSTEM_INSTRUCTION }, // System instruction goes first
-                { role: 'user', content: prompt }             // User prompt goes second
+                ...chatHistory,             // User prompt goes second
             ],
             // Optional: Add a temperature setting for creativity/consistency
             temperature: 0.2, // Lower temperature (e.g., 0.2) is good for code review/consistency
         });
-        return response.choices[0].message.content;
+
+        const reply = response.choices[0].message.content;
+        chatHistory.push({ role: "assistant", content: reply });
+
+        return reply
     } catch (error) {
         console.error('Error interacting with LongCat AI:', error);
         throw error;

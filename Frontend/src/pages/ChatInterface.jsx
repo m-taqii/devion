@@ -55,7 +55,7 @@ const ChatInterface = () => {
 
     return (
         <div className="flex h-screen bg-[#151922]">
-            {/* Sidebar
+            {/* Sidebar */}
             <div className="w-64 bg-[#191d25] p-4 hidden md:block shrink-0">
                 <button className="w-full py-3 px-4 rounded-lg border border-slate-700 text-white text-left hover:bg-[#2a2a2a] transition-colors">
                     + New Chat
@@ -63,7 +63,7 @@ const ChatInterface = () => {
                 <div className="mt-6 text-sm text-slate-400">
                     <p>Chat History</p>
                 </div>
-            </div> */}
+            </div>
 
             {/* Main Content */}
             <div className="flex-1 flex flex-col min-w-0">
@@ -107,7 +107,7 @@ const ChatInterface = () => {
                 </div>
 
                 {/* Input Area - Fixed at bottom */}
-                <div className="absolute bottom-0 left-0 right-0 md:left-6 p-4 bg-[#151922]">
+                <div className="absolute bottom-0 left-0 right-0 md:left-64 p-4 bg-[#151922]">
                     <div className="max-w-3xl mx-auto">
                         <div className="relative bg-[#282f41] rounded-2xl">
                             <textarea
