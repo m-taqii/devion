@@ -26,6 +26,15 @@ const ChatInterface = () => {
             const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/ai/get-response`, {
                 prompt: input,
                 model: model,
+
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'token': localStorage.getItem('token') || '',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                withCredentials: true
             });
 
             if (!res.data) throw new Error('Failed to fetch response');
@@ -38,6 +47,7 @@ const ChatInterface = () => {
             } catch {
                 aiResponse = data;
             }
+            if (res.status == 429) setMessages(prev => [...prev, { role: 'assistant', content: 'You have reached Your limit For today' }]);
 
             setMessages(prev => [...prev, { role: 'assistant', content: aiResponse }]);
         } catch (error) {
@@ -132,8 +142,8 @@ const ChatInterface = () => {
                                 onClick={handleSend}
                                 disabled={loading || !input.trim()}
                                 className={`absolute right-3 bottom-3 p-2 rounded-lg ${input.trim() && !loading
-                                        ? 'bg-white text-black hover:bg-gray-200'
-                                        : 'bg-[#4a4a4a] text-gray-500 cursor-not-allowed'
+                                    ? 'bg-white text-black hover:bg-gray-200'
+                                    : 'bg-[#4a4a4a] text-gray-500 cursor-not-allowed'
                                     } transition-colors`}
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

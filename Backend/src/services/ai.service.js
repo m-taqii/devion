@@ -3,8 +3,6 @@ const OpenAI = require('openai');
 let openai;
 let modelNameForAPI;
 
-
-
 // System instruction for the AI code reviewer
 const SYSTEM_INSTRUCTION = `
 You are an experienced, highly knowledgeable senior software engineer with deep expertise across full-stack development, system design, debugging, optimization, and modern engineering best practices.
@@ -52,38 +50,39 @@ If you don't have enough context, ask the user for the missing details.
 Your goal:
 To act as the user’s expert engineering partner—help them understand, fix, improve, and grow as a developer while maintaining professional-grade quality in all explanations.
 `;
+
 let chatHistory = [];
 
 async function generateResponse(prompt, model) {
 
-switch (model) {
-    case 'gemini-2.5-flash':
-        openai = new OpenAI({
-            apiKey: process.env.GEMINI_API_KEY,
-            baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/"
-        });
-        modelNameForAPI = "gemini-2.5-flash";
-        break;
+    switch (model) {
+        case 'gemini-2.5-flash':
+            openai = new OpenAI({
+                apiKey: process.env.GEMINI_API_KEY,
+                baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/"
+            });
+            modelNameForAPI = "gemini-2.5-flash";
+            break;
 
-    case 'longcat-flash-chat':
-        openai = new OpenAI({
-            apiKey: process.env.LONGCAT_API_KEY,
-            baseURL: "https://api.longcat.chat/openai/v1"
-        });
-        modelNameForAPI = "longcat-flash-chat";
-        break;
+        case 'longcat-flash-chat':
+            openai = new OpenAI({
+                apiKey: process.env.LONGCAT_API_KEY,
+                baseURL: "https://api.longcat.chat/openai/v1"
+            });
+            modelNameForAPI = "longcat-flash-chat";
+            break;
 
-    case 'longcat-flash-thinking':
-        openai = new OpenAI({
-            apiKey: process.env.LONGCAT_API_KEY,
-            baseURL: "https://api.longcat.chat/openai/v1"
-        });
-        modelNameForAPI = "longcat-flash-thinking";
-        break;
+        case 'longcat-flash-thinking':
+            openai = new OpenAI({
+                apiKey: process.env.LONGCAT_API_KEY,
+                baseURL: "https://api.longcat.chat/openai/v1"
+            });
+            modelNameForAPI = "longcat-flash-thinking";
+            break;
 
-    default:
-        return res.status(400).json({ error: "Invalid model selected" });
-}
+        default:
+            throw new Error(`Invalid model selected: ${model}`);
+    }
 
     try {
 
@@ -95,8 +94,8 @@ switch (model) {
         const response = await openai.chat.completions.create({
             model: modelNameForAPI,
             messages: [
-                { role: 'system', content: SYSTEM_INSTRUCTION }, 
-                ...chatHistory,           
+                { role: 'system', content: SYSTEM_INSTRUCTION },
+                ...chatHistory,
             ],
             temperature: 0.2, // Lower temperature (e.g., 0.2) is good for code review/consistency
         });

@@ -11,9 +11,14 @@ const Login = () => {
     e.preventDefault()
     try {
       const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/login`, { email, password })
-      navigate('/chat')
       console.log(response.data)
 
+      // Save the token to localStorage
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token)
+      }
+
+      navigate('/chat')
     } catch (error) {
       console.error(error)
     }

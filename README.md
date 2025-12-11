@@ -6,6 +6,9 @@ CodeRev is a modern, AI-powered code review and developer assistant. It provides
 
 - **AI Code Review**: Get detailed feedback on code quality, bugs, and improvements
 - **Multiple AI Models**: Choose between Quick Assist, Creative Writer, or Deep Thinker modes
+- **Rate Limiting**: Fair usage policy with tiered access:
+  - **Guests**: 5 requests per day (IP-based)
+  - **Logged-in Users**: 50 requests per day
 - **Markdown Rendering**: AI responses support rich markdown with syntax highlighting
 - **User Authentication**: Sign up and login functionality with JWT tokens
 - **Chat History**: Maintains conversation context (up to 10 messages)
@@ -35,6 +38,7 @@ CodeRev is a modern, AI-powered code review and developer assistant. It provides
 | Mongoose | 9.0.1 | MongoDB ODM |
 | bcryptjs | 3.0.3 | Password Hashing |
 | jsonwebtoken | 9.0.3 | JWT Authentication |
+| cookie-parser | (latest) | Parse Cookie Headers |
 | CORS | 2.8.5 | Cross-Origin Requests |
 | dotenv | 17.2.3 | Environment Variables |
 
@@ -60,8 +64,11 @@ coderev/
 │   │   │   └── userAuth.route.js
 │   │   ├── services/
 │   │   │   └── ai.service.js   # AI integration with multi-model support
+│   │   ├── middlewares/
+│   │   │   └── limit.middleware.js # Rate limiting logic
 │   │   ├── models/
-│   │   │   └── user.model.js   # User schema with auth methods
+│   │   │   ├── user.model.js   # User schema with auth methods
+│   │   │   └── usage.models.js # Request usage tracking
 │   │   └── db/
 │   │       └── db.js           # MongoDB connection
 │   ├── server.js               # Server entry point
@@ -107,40 +114,15 @@ coderev/
 ## API Endpoints
 
 ### AI Routes (`/ai`)
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/ai/get-response` | Send prompt and model, receive AI response |
-
-**Request Body:**
-```json
-{
-  "prompt": "Your code or question here",
-  "model": "gemini-2.5-flash"
-}
-```
+| Method | Endpoint | Description | Usage Limit |
+|--------|----------|-------------|-------------|
+| POST | `/ai/get-response` | Send prompt and model, receive AI response | 5/day (Guest), 50/day (User) |
 
 ### User Routes (`/user`)
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | POST | `/user/signup` | Register new user |
 | POST | `/user/login` | Login existing user |
-
-**Signup Request:**
-```json
-{
-  "name": "User Name",
-  "email": "user@example.com",
-  "password": "password123"
-}
-```
-
-**Login Request:**
-```json
-{
-  "email": "user@example.com",
-  "password": "password123"
-}
-```
 
 ## Installation
 
@@ -167,6 +149,7 @@ LONGCAT_API_KEY=your_longcat_api_key
 GEMINI_API_KEY=your_gemini_api_key
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret_key
+FRONTEND_URL=http://localhost:5173
 ```
 
 Start the server:
@@ -219,6 +202,7 @@ App runs on `http://localhost:5173`
 | `GEMINI_API_KEY` | API key for Google Gemini |
 | `MONGO_URI` | MongoDB connection string |
 | `JWT_SECRET` | Secret key for JWT tokens |
+| `FRONTEND_URL` | Frontend URL for CORS configuration |
 
 ### Frontend
 | Variable | Description |
