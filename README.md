@@ -1,6 +1,6 @@
-# CodeRev - AI Code Review Assistant
+# Devion - AI Code Review Assistant
 
-CodeRev is a modern, AI-powered code review and developer assistant. It provides a chat interface where developers can get instant feedback on their code, debug issues, learn best practices, and receive mentorship from an AI senior engineer.
+Devion is a modern, AI-powered code review and developer assistant. It provides a chat interface where developers can get instant feedback on their code, debug issues, learn best practices, and receive mentorship from an AI senior engineer.
 
 ## Features
 

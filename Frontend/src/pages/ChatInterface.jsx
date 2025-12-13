@@ -65,9 +65,9 @@ const ChatInterface = () => {
     };
 
     return (
-        <div className="flex h-screen bg-[#151922]">
+        <div className="flex h-screen bg-black">
             {/* Sidebar */}
-            <div className="w-64 bg-[#191d25] p-4 hidden md:block shrink-0">
+            <div className="w-64 bg-gray-950 p-4 hidden md:block shrink-0">
                 <button className="w-full py-3 px-4 rounded-lg border border-slate-700 text-white text-left hover:bg-[#2a2a2a] transition-colors">
                     + New Chat
                 </button>
@@ -80,7 +80,7 @@ const ChatInterface = () => {
             <div className="flex-1 flex flex-col min-w-0">
                 {/* Header */}
                 <header className="flex items-center justify-center py-3 border-b border-[#2a2a2a] shrink-0">
-                    <Link to={"/"} className="text-white font-medium">CodeRev</Link>
+                    <Link to={"/"} className="text-white font-medium">Devion</Link>
                 </header>
 
                 {/* Messages Area */}
@@ -118,9 +118,9 @@ const ChatInterface = () => {
                 </div>
 
                 {/* Input Area - Fixed at bottom */}
-                <div className="absolute bottom-0 left-0 right-0 md:left-64 p-4 bg-[#151922]">
+                <div className="absolute bottom-0 left-0 right-0 md:left-64 p-4 bg-black">
                     <div className="max-w-3xl mx-auto">
-                        <div className="relative bg-[#282f41] rounded-2xl">
+                        <div className="relative bg-gray-900 rounded-2xl">
                             <textarea
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
@@ -132,7 +132,7 @@ const ChatInterface = () => {
                             <select
                                 value={model}
                                 onChange={(e) => setModel(e.target.value)}
-                                className="absolute right-12 bottom-3 p-2 rounded-lg cursor-pointer bg-[#1e2536] mr-2 no-scrollbar"
+                                className="absolute right-12 bottom-3 p-2 rounded-lg cursor-pointer bg-gray-950 mr-2 no-scrollbar"
                             >
                                 <option value="gemini-2.5-flash">Quick Assist</option>
                                 <option value="longcat-flash-chat">Creative Writer</option>
@@ -143,7 +143,7 @@ const ChatInterface = () => {
                                 disabled={loading || !input.trim()}
                                 className={`absolute right-3 bottom-3 p-2 rounded-lg ${input.trim() && !loading
                                     ? 'bg-white text-black hover:bg-gray-200'
-                                    : 'bg-[#4a4a4a] text-gray-500 cursor-not-allowed'
+                                    : 'bg-white text-gray-500 cursor-not-allowed'
                                     } transition-colors`}
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
