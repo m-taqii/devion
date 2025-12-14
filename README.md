@@ -1,11 +1,24 @@
-# Devion - AI Code Review Assistant
+# Devion - AI Code Assistant
+
+![React](https://img.shields.io/badge/React-19.2.0-61DAFB?style=for-the-badge&logo=react&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-7.2.4-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Three.js](https://img.shields.io/badge/Three.js-0.181.0-000000?style=for-the-badge&logo=threedotjs&logoColor=white)
+![Redux](https://img.shields.io/badge/Redux-2.11.1-764ABC?style=for-the-badge&logo=redux&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind-4.1.17-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express-5.1.0-000000?style=for-the-badge&logo=express&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-9.0.1-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
 Devion is a modern, AI-powered code review and developer assistant. It provides a chat interface where developers can get instant feedback on their code, debug issues, learn best practices, and receive mentorship from an AI senior engineer.
 
 ## Features
 
 - **Immersive 3D Landing Page**: Interactive 3D elements powered by Three.js with post-processing effects (Bloom, Chromatic Aberration, Tone Mapping)
+- **Redux State Management**: Global state for 3D scene settings (DPR, effects, interactions)
 - **Adaptive Performance**: Automatic quality scaling based on device performance using PerformanceMonitor
+- **Mobile Responsive 3D**: Different camera settings for mobile and desktop devices
+- **GSAP Animations**: Scroll-triggered animations using GSAP and ScrollTrigger
 - **Streaming AI Responses**: Real-time token-by-token response streaming for faster perceived response times
 - **AI Code Review**: Get detailed feedback on code quality, bugs, and improvements
 - **Multiple AI Models**: Choose between Quick, Pro, or Deep thinking modes
@@ -28,14 +41,16 @@ Devion is a modern, AI-powered code review and developer assistant. It provides 
 |------------|---------|---------|
 | React | 19.2.0 | UI Library |
 | Vite | 7.2.4 | Build Tool |
+| Redux Toolkit | 2.11.1 | State Management |
+| React Redux | 9.2.0 | React Bindings for Redux |
 | Tailwind CSS | 4.1.17 | Styling |
 | React Router DOM | 7.10.0 | Routing |
 | React Three Fiber | 9.4.2 | 3D Rendering (React wrapper for Three.js) |
 | Three.js | 0.181.0 | 3D Graphics |
-| Drei | 10.7.7 | R3F Helpers (PerformanceMonitor, AdaptiveDpr) |
+| Drei | 10.7.7 | R3F Helpers (PerformanceMonitor, Float, AdaptiveDpr) |
 | Postprocessing | 3.0.4 | 3D Visual Effects (Bloom, ChromaticAberration, ToneMapping) |
 | Lenis | 1.3.16 | Smooth Scrolling |
-| GSAP | 3.14.1 | Animations |
+| GSAP | 3.14.1 | Animations & ScrollTrigger |
 | Axios | 1.13.2 | HTTP Client |
 | React Markdown | 10.1.0 | Markdown Rendering |
 | Rehype Highlight | 7.0.2 | Code Syntax Highlighting |
@@ -93,26 +108,45 @@ devion/
 │   │   ├── noise.svg           # Background texturing
 │   │   └── fonts/              # Custom fonts (ScienceGothic)
 │   ├── src/
+│   │   ├── app/
+│   │   │   └── store.js        # Redux store configuration
+│   │   ├── features/
+│   │   │   └── modelSlice.js   # Redux slice for 3D settings
+│   │   ├── models/
+│   │   │   └── DamagedHelmet.jsx # 3D Model Component
 │   │   ├── components/
 │   │   │   ├── Navbar.jsx
 │   │   │   ├── Footer.jsx
-│   │   │   ├── CanvasContent.jsx # 3D Scene with effects
-│   │   │   └── DamagedHelmet.jsx # 3D Model Component
+│   │   │   ├── CanvasExperience.jsx # 3D Canvas wrapper with performance monitoring
+│   │   │   └── CanvasContent.jsx    # 3D Scene content with effects
 │   │   ├── pages/
-│   │   │   ├── Home.jsx        # Landing page with adaptive 3D scene
+│   │   │   ├── Home.jsx        # Landing page with mobile detection
 │   │   │   ├── ChatInterface.jsx # Chat UI with streaming responses
 │   │   │   ├── Login.jsx       # Login page
 │   │   │   └── Signup.jsx      # Signup page
 │   │   ├── App.jsx             # Routes setup & Lenis scroll
 │   │   ├── App.css
 │   │   ├── index.css           # Global styles & fonts
-│   │   └── main.jsx            # React entry point
+│   │   └── main.jsx            # React entry point with Redux Provider
 │   ├── package.json
 │   └── .env                    # API URL config
 │
 ├── README.md
 ├── LICENSE
 └── .gitignore
+```
+
+## Redux State
+
+The application uses Redux Toolkit for managing 3D scene settings:
+
+```javascript
+// modelSlice state
+{
+  interaction: true,    // Enable/disable 3D interactions
+  enableEffects: true,  // Enable/disable post-processing effects
+  dpr: 1.5             // Device pixel ratio for rendering quality
+}
 ```
 
 ## Pages & Routes

@@ -1,13 +1,16 @@
 import React from 'react'
-import { PerformanceMonitor } from '@react-three/drei'
-import DamagedHelmet from './DamagedHelmet'
+import { Float, PerformanceMonitor } from '@react-three/drei'
+import DamagedHelmet from '../models/DamagedHelmet'
 import { EffectComposer, ToneMapping, ChromaticAberration, Bloom } from "@react-three/postprocessing"
 import { useHelper, AdaptiveDpr, AdaptiveEvents } from '@react-three/drei'
-const CanvasContent = ({ enableEffects }) => {
+import { useSelector } from 'react-redux'
+
+const CanvasContent = () => {
+  const { enableEffects, enableInteraction } = useSelector((state) => state.model)
   return (
     <>
       <AdaptiveDpr pixelated />
-      <AdaptiveEvents />
+      {enableInteraction && <AdaptiveEvents />}
       <ambientLight intensity={0.25} />
       <directionalLight
         position={[5, 10, 7.5]}
@@ -25,7 +28,7 @@ const CanvasContent = ({ enableEffects }) => {
       />
 
       <DamagedHelmet />
-
+      <Float />
       {/* Rim light for better shape definition */}
       <spotLight position={[-5, 5, -5]} intensity={4} color="#00ffff" />
       <spotLight position={[5, -5, -5]} intensity={4} color="#ff00ff" />

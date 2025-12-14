@@ -3,12 +3,9 @@ import { Link } from 'react-router-dom'
 
 const Navbar = () => {
     return (
-        <nav className='fixed top-0 left-0 w-full flex justify-between items-center p-4 text-white backdrop-blur-2xl bg-black/20 z-50'>
-            <img src="/devion.png" alt="Devion Logo" className='w-20' />
+        <nav className='fixed top-0 left-0 w-full flex justify-between items-center p-4 text-white backdrop-blur-2xl z-50'>
+            <Link to="/"><img src="/devion.png" alt="Devion Logo" className='w-20' /></Link>
             <ul className='flex gap-4'>
-                <li>
-                    <Link to="/" className='font-semibold font-[ScienceGothicLight]'>Home</Link>
-                </li>
                 <li>
                     <Link to="/chat" className='font-semibold font-[ScienceGothicLight]'>Chat</Link>
                 </li>
