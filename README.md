@@ -4,17 +4,22 @@ Devion is a modern, AI-powered code review and developer assistant. It provides 
 
 ## Features
 
-- **Immersive 3D Landing Page**: Interactive 3D elements powered by Three.js with post-processing effects.
-- **AI Code Review**: Get detailed feedback on code quality, bugs, and improvements.
-- **Multiple AI Models**: Choose between Quick Assist, Creative Writer, or Deep Thinker modes.
+- **Immersive 3D Landing Page**: Interactive 3D elements powered by Three.js with post-processing effects (Bloom, Chromatic Aberration, Tone Mapping)
+- **Adaptive Performance**: Automatic quality scaling based on device performance using PerformanceMonitor
+- **Streaming AI Responses**: Real-time token-by-token response streaming for faster perceived response times
+- **AI Code Review**: Get detailed feedback on code quality, bugs, and improvements
+- **Multiple AI Models**: Choose between Quick, Pro, or Deep thinking modes
 - **Rate Limiting**: Fair usage policy with tiered access:
   - **Guests**: 5 requests per day (IP-based)
   - **Logged-in Users**: 50 requests per day
-- **Markdown Rendering**: AI responses support rich markdown with syntax highlighting.
-- **User Authentication**: Sign up and login functionality with JWT tokens.
-- **Chat History**: Maintains conversation context (up to 10 messages).
-- **Responsive Design**: Works on desktop and mobile devices.
-- **Smooth Scrolling**: Enhanced scrolling experience using Lenis.
+- **Markdown Rendering**: AI responses support rich markdown with syntax highlighting
+- **User Authentication**: Sign up and login functionality with JWT tokens
+- **Chat History**: Maintains conversation context (up to 10 messages)
+- **New Chat**: Clear conversation and start fresh with one click
+- **Auto-resize Input**: Textarea automatically expands as you type
+- **Auto-scroll**: Messages automatically scroll to bottom on new content
+- **Responsive Design**: Works on desktop and mobile devices
+- **Smooth Scrolling**: Enhanced scrolling experience using Lenis
 
 ## Tech Stack
 
@@ -27,8 +32,8 @@ Devion is a modern, AI-powered code review and developer assistant. It provides 
 | React Router DOM | 7.10.0 | Routing |
 | React Three Fiber | 9.4.2 | 3D Rendering (React wrapper for Three.js) |
 | Three.js | 0.181.0 | 3D Graphics |
-| Drei | 10.7.7 | R3F Helpers |
-| Postprocessing | 3.0.4 | 3D Visual Effects (Bloom, etc.) |
+| Drei | 10.7.7 | R3F Helpers (PerformanceMonitor, AdaptiveDpr) |
+| Postprocessing | 3.0.4 | 3D Visual Effects (Bloom, ChromaticAberration, ToneMapping) |
 | Lenis | 1.3.16 | Smooth Scrolling |
 | GSAP | 3.14.1 | Animations |
 | Axios | 1.13.2 | HTTP Client |
@@ -51,19 +56,19 @@ Devion is a modern, AI-powered code review and developer assistant. It provides 
 ### AI Models
 | Model Name | Display Name | Provider |
 |------------|-------------|----------|
-| gemini-2.5-flash | Quick Assist | Google Gemini |
-| longcat-flash-chat | Creative Writer | LongCat AI |
-| longcat-flash-thinking | Deep Thinker | LongCat AI |
+| gemini-2.5-flash | Quick | Google Gemini |
+| longcat-flash-chat | Pro | LongCat AI |
+| longcat-flash-thinking | Deep | LongCat AI |
 
 ## Project Structure
 
 ```
-coderev/
+devion/
 ├── Backend/
 │   ├── src/
 │   │   ├── app.js              # Express app setup with routes
 │   │   ├── controllers/
-│   │   │   ├── ai.controller.js
+│   │   │   ├── ai.controller.js  # Streaming response handler
 │   │   │   └── userAuth.controller.js
 │   │   ├── routes/
 │   │   │   ├── ai.route.js
@@ -86,16 +91,16 @@ coderev/
 │   │   ├── devion.png          # Logo
 │   │   ├── models/             # 3D Assets (GLTF/GLB)
 │   │   ├── noise.svg           # Background texturing
-│   │   ├── robot.png           # Fallback image
 │   │   └── fonts/              # Custom fonts (ScienceGothic)
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── Navbar.jsx
 │   │   │   ├── Footer.jsx
-│   │   │   └── DamagedHelmet.jsx # 3D Component
+│   │   │   ├── CanvasContent.jsx # 3D Scene with effects
+│   │   │   └── DamagedHelmet.jsx # 3D Model Component
 │   │   ├── pages/
-│   │   │   ├── Home.jsx        # Landing page with 3D scene
-│   │   │   ├── ChatInterface.jsx # Chat UI with model selection
+│   │   │   ├── Home.jsx        # Landing page with adaptive 3D scene
+│   │   │   ├── ChatInterface.jsx # Chat UI with streaming responses
 │   │   │   ├── Login.jsx       # Login page
 │   │   │   └── Signup.jsx      # Signup page
 │   │   ├── App.jsx             # Routes setup & Lenis scroll
@@ -114,8 +119,8 @@ coderev/
 
 | Route | Page | Description |
 |-------|------|-------------|
-| `/` | Home | Immersive landing page with 3D elements |
-| `/chat` | ChatInterface | AI chat with model selection |
+| `/` | Home | Immersive landing page with adaptive 3D elements |
+| `/chat` | ChatInterface | AI chat with streaming responses & model selection |
 | `/login` | Login | User login form |
 | `/signup` | Signup | User registration form |
 
@@ -124,7 +129,7 @@ coderev/
 ### AI Routes (`/ai`)
 | Method | Endpoint | Description | Usage Limit |
 |--------|----------|-------------|-------------|
-| POST | `/ai/get-response` | Send prompt and model, receive AI response | 5/day (Guest), 50/day (User) |
+| POST | `/ai/get-response` | Send prompt and model, receive streaming AI response | 5/day (Guest), 50/day (User) |
 
 ### User Routes (`/user`)
 | Method | Endpoint | Description |
@@ -141,8 +146,8 @@ coderev/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/m-taqii/coderev.git
-cd coderev
+git clone https://github.com/m-taqii/devion.git
+cd devion
 ```
 
 ### 2. Backend Setup

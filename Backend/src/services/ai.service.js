@@ -1,4 +1,5 @@
 const OpenAI = require('openai');
+const { Stream } = require('openai/core/streaming.js');
 
 let openai;
 let modelNameForAPI;
@@ -53,7 +54,7 @@ To act as the user’s expert engineering partner—help them understand, fix, i
 
 let chatHistory = [];
 
-async function generateResponse(prompt, model) {
+async function* generateResponse(prompt, model) {
 
     switch (model) {
         case 'gemini-2.5-flash':
@@ -85,6 +86,7 @@ async function generateResponse(prompt, model) {
     }
 
     try {
+        let fullReply = "";
 
         if (chatHistory.length > 10) {
             chatHistory.shift(); // remove oldest
@@ -98,12 +100,18 @@ async function generateResponse(prompt, model) {
                 ...chatHistory,
             ],
             temperature: 0.2, // Lower temperature (e.g., 0.2) is good for code review/consistency
+            stream: true
         });
 
-        const reply = response.choices[0].message.content;
-        chatHistory.push({ role: "assistant", content: reply });
+        for await (const chunk of response) {
+            const token = chunk.choices[0]?.delta?.content;
+            if (token) {
+                fullReply += token;
+                yield token; // Yield token to controller
+            }
+        }
+        chatHistory.push({ role: "assistant", content: fullReply });
 
-        return reply
     } catch (error) {
         console.error('Error interacting with AI:', error);
         throw error;

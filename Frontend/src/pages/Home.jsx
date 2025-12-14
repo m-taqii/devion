@@ -3,51 +3,10 @@ import Navbar from '../components/Navbar'
 import { Link } from 'react-router-dom'
 import Footer from '../components/Footer'
 import { Canvas } from '@react-three/fiber'
-import DamagedHelmet from '../components/DamagedHelmet'
-import { EffectComposer, ToneMapping, ChromaticAberration, Bloom } from "@react-three/postprocessing"
-import { useHelper, AdaptiveDpr, AdaptiveEvents } from '@react-three/drei'
-import { DirectionalLightHelper, PointLightHelper } from 'three'
+import { PerformanceMonitor } from '@react-three/drei'
+import { useState } from 'react'
+import CanvasContent from '../components/CanvasContent'
 
-const SceneContent = () => {
-  return (
-    <>
-      <AdaptiveDpr pixelated />
-      <AdaptiveEvents />
-      <ambientLight intensity={0.25} />
-      <directionalLight
-        position={[5, 10, 7.5]}
-        intensity={1}
-        castShadow
-        shadow-mapSize={[512, 512]}
-        color="#ffffff"
-      />
-      <rectAreaLight
-        position={[0, 0, 5]}
-        width={4}
-        height={4}
-        intensity={2}
-        color="#4f46e5" /* Indigo hint */
-      />
-
-      <DamagedHelmet />
-
-      {/* Rim light for better shape definition */}
-      <spotLight position={[-5, 5, -5]} intensity={4} color="#00ffff" />
-      <spotLight position={[5, -5, -5]} intensity={4} color="#ff00ff" />
-
-      <EffectComposer multisampling={0} disableNormalPass>
-        <ToneMapping />
-        <Bloom
-          luminanceThreshold={0.5}
-          luminanceSmoothing={0.9}
-          intensity={0.5}
-          mipmapBlur
-        />
-        <ChromaticAberration offset={[0.002, 0.002]} />
-      </EffectComposer>
-    </>
-  )
-}
 
 const Home = () => {
   const cards = [
@@ -57,7 +16,8 @@ const Home = () => {
   ]
 
   const items = ['Code Review', 'Debugging', 'Refactoring', 'Career Guidance']
-
+  const [dpr, setDpr] = useState(1.5) // Default pixel ratio
+  const [enableEffects, setEnableEffects] = useState(true)
   return (
     <div className='min-h-screen w-full bg-black'>
       <Navbar />
@@ -72,17 +32,24 @@ const Home = () => {
 
           {/* Noise overlay */}
           <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-20"></div>
-          <img 
-            src="/devion.png" 
-            alt="Devion Logo" 
+          <img
+            src="/devion.png"
+            alt="Devion Logo"
             className='absolute w-170 z-51 top-55 left-1/2 transform -translate-x-1/2 mix-blend-difference'
             fetchPriority="high"
             loading="eager"
           />
           {/* Canvas for 3D scene */}
-          <Canvas shadows dpr={[1, 1.5]} gl={{ antialias: false }} camera={{ position: [0, 0, 4], fov: 45 }}>
+          <Canvas shadows dpr={dpr} gl={{ antialias: false }} camera={{ position: [0, 0, 4], fov: 45 }}>
+            <PerformanceMonitor
+              onIncline={() => setDpr(2)}
+              onDecline={() => {
+                setDpr(1);         // Lower resolution
+                setEnableEffects(false); // KILL post-processing on slow phones
+              }}
+            />
             <Suspense fallback={null}>
-              <SceneContent />
+              <CanvasContent enableEffects={enableEffects} />
             </Suspense>
           </Canvas>
         </div>
