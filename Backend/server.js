@@ -4,10 +4,6 @@ const connectDB = require('./src/db/db');
 
 const port = process.env.PORT || 3000;
 
-app.get('/', (req, res) => {
-  res.send('API is running successfully');
-});
-
 const startServer = async () => {
   try {
     await connectDB();
