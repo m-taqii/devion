@@ -15,6 +15,7 @@ Devion is a modern, AI-powered code review and developer assistant. It provides 
 ## Features
 
 - **Immersive 3D Landing Page**: Interactive 3D elements powered by Three.js with post-processing effects (Bloom, Chromatic Aberration, Tone Mapping)
+- **Interactive UI Elements**: Custom rotating badge and animated components for a premium feel
 - **Redux State Management**: Global state for 3D scene settings (DPR, effects, interactions)
 - **Adaptive Performance**: Automatic quality scaling based on device performance using PerformanceMonitor
 - **Mobile Responsive 3D**: Different camera settings for mobile and desktop devices
@@ -27,7 +28,7 @@ Devion is a modern, AI-powered code review and developer assistant. It provides 
   - **Logged-in Users**: 50 requests per day
 - **Markdown Rendering**: AI responses support rich markdown with syntax highlighting
 - **User Authentication**: Sign up and login functionality with JWT tokens
-- **Chat History**: Maintains conversation context (up to 10 messages)
+- **Chat Context**: Maintains conversation context (up to 10 messages)
 - **New Chat**: Clear conversation and start fresh with one click
 - **Auto-resize Input**: Textarea automatically expands as you type
 - **Auto-scroll**: Messages automatically scroll to bottom on new content
@@ -117,6 +118,7 @@ devion/
 │   │   ├── components/
 │   │   │   ├── Navbar.jsx
 │   │   │   ├── Footer.jsx
+│   │   │   ├── RotatingBadge.jsx # Animated rotating text badge
 │   │   │   ├── CanvasExperience.jsx # 3D Canvas wrapper with performance monitoring
 │   │   │   └── CanvasContent.jsx    # 3D Scene content with effects
 │   │   ├── pages/

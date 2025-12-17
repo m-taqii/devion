@@ -10,16 +10,10 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from "@gsap/react";
 import CanvasExperience from '../components/CanvasExperience'
 
+import RotatingBadge from '../components/RotatingBadge'
+
 const Home = () => {
-  const cards = [
-    { title: 'Expert Debugging', desc: 'Pinpoint bugs and provide fixes with explanations.' },
-    { title: 'Code Reviews', desc: 'Best-practice suggestions, refactors, and tests.' },
-    { title: 'Architecture', desc: 'Scalable system designs and API schemas.' },
-  ]
-
-  const items = ['Code Review', 'Debugging', 'Refactoring', 'Career Guidance']
   const [ismobile, setIsmobile] = useState(false)
-
   useEffect(() => {
     if (window.innerWidth < 768) {
       setIsmobile(true)
@@ -51,34 +45,23 @@ const Home = () => {
       </div>
 
       {/* Hero Section */}
-      <section className='relative z-10 pointer-events-none h-screen w-full'>
+      <section className='relative z-10 pointer-events-none h-screen w-full flex flex-col items-center justify-center '>
         <img
           src="/devion.png"
           alt="Devion Logo"
-          className='pointer-events-auto absolute w-170 z-51 top-70 md:top-55 left-1/2 transform -translate-x-1/2 mix-blend-difference'
+          className='pointer-events-auto w-170 mix-blend-difference mt-20'
           fetchPriority="high"
           loading="eager"
         />
-      </section>
 
-      {/* Capabilities Section */}
-      <section className='relative z-10 h-screen w-full'>
-        <div className="flex flex-col gap-3 h-screen m-5">
-          <h2 className="pointer-events-auto text-4xl font-bold text-blue-500 text-right">Capabilities</h2>
-          {items.map((item) => {
-            return (
-              <ul className='flex justify-end gap-2' key={item}>
-                <li className="pointer-events-auto text-white text-md border border-blue-500 p-1 rounded-lg">{item}</li>
-              </ul>
-            )
-          })}
+        <div className="pointer-events-auto text-left w-50 md:w-110 max-w-2xl relative md:top-25 md:right-112 top-42 right-18">
+          <p className="text-blue-200/80 text-xs/2 flex flex-col md:inline-block gap-2 md:text-sm font-light tracking-wide font-[ScienceGothicLight]">
+            INTELLIGENCE REDEFINED FOR THE <span className="text-blue-500 font-semibold font-[ScienceGothic]">MODERN DEVELOPER</span>
+          </p>
         </div>
       </section>
 
-      {/* Footer */}
-      <div className="relative z-50 pointer-events-auto">
-        <Footer />
-      </div>
+      <RotatingBadge />
     </div>
   )
 }
