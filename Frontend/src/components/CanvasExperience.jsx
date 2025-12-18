@@ -5,7 +5,7 @@ import CanvasContent from './CanvasContent'
 import { PerformanceMonitor } from '@react-three/drei'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
-import { setDpr, setEnableEffects } from '../redux/modelSlice'
+import { setDpr, setEnableEffects } from '../features/modelSlice'
 
 const CanvasExperience = ({ismobile}) => {
   const { dpr, enableEffects, enableInteraction } = useSelector((state) => state.model)
