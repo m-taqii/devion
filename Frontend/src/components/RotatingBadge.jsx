@@ -2,7 +2,7 @@ import React from 'react';
 
 const RotatingBadge = () => {
     return (
-        <div className="fixed md:bottom-10 md:right-10 bottom-5 right-3 z-50 pointer-events-auto mix-blend-difference">
+        <div className="pointer-events-none fixed md:bottom-10 md:right-10 bottom-5 right-3 z-50 mix-blend-difference">
             <div className="relative md:w-32 md:h-32 w-20 h-20 flex items-center justify-center">
                 {/* Rotating Text Ring */}
                 <div className="absolute inset-0 animate-[spin_10s_linear_infinite]">

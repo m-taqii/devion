@@ -49,12 +49,12 @@ const Home = () => {
         <img
           src="/devion.png"
           alt="Devion Logo"
-          className='pointer-events-auto w-170 mix-blend-difference mt-20'
+          className='pointer-events-none w-170 mix-blend-difference mt-20'
           fetchPriority="high"
           loading="eager"
         />
 
-        <div className="pointer-events-auto text-left w-50 md:w-110 max-w-2xl relative md:top-25 md:right-112 top-42 right-18">
+        <div className="pointer-events-none text-left w-50 md:w-110 max-w-2xl relative md:top-25 md:right-112 top-42 right-18">
           <p className="text-blue-200/80 text-xs/2 flex flex-col md:inline-block gap-2 md:text-sm font-light tracking-wide font-[ScienceGothicLight]">
             INTELLIGENCE REDEFINED FOR THE <span className="text-blue-500 font-semibold font-[ScienceGothic]">MODERN DEVELOPER</span>
           </p>
