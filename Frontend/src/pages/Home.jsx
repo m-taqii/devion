@@ -9,6 +9,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from "@gsap/react";
 import CanvasExperience from '../components/CanvasExperience'
+import Lenis from 'lenis'
 
 import RotatingBadge from '../components/RotatingBadge'
 
@@ -20,6 +21,28 @@ const Home = () => {
     }
   }, [])
 
+  // Lenis smooth scroll - only for Home page
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+    });
+
+    let rafId;
+    function raf(time) {
+      lenis.raf(time);
+      rafId = requestAnimationFrame(raf);
+    }
+
+    rafId = requestAnimationFrame(raf);
+
+    // Cleanup on unmount to prevent interference with other pages
+    return () => {
+      cancelAnimationFrame(rafId);
+      lenis.destroy();
+    };
+  }, []);
 
   useGSAP(() => {
     gsap.registerPlugin(ScrollTrigger)
