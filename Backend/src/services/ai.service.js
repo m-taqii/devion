@@ -1,8 +1,8 @@
-const OpenAI = require('openai');
-const { Stream } = require('openai/core/streaming.js');
-
-let openai;
-let modelNameForAPI;
+const { ToolNode } = require("@langchain/langgraph/prebuilt");
+const { TavilySearch } = require("@langchain/tavily");
+const { ChatOpenAI } = require("@langchain/openai");
+const { MessagesAnnotation, StateGraph, MemorySaver } = require("@langchain/langgraph");
+const { HumanMessage, SystemMessage } = require("@langchain/core/messages");
 
 // System instruction for the AI code reviewer
 const SYSTEM_INSTRUCTION = `You are Devion AI, an AI code reviewer and debugger.
@@ -52,65 +52,117 @@ Your goal:
 To act as the user’s expert engineering partner—help them understand, fix, improve, and grow as a developer while maintaining professional-grade quality in all explanations.
 `;
 
-let chatHistory = [];
+// Global checkpointer to persist state across requests (mimicking previous behavior)
+const checkPointer = new MemorySaver();
 
-async function* generateResponse(prompt, model) {
+const SearchTool = new TavilySearch({
+    maxResults: 5,
+    topic: "general",
+});
+const tools = [SearchTool];
+const toolNode = new ToolNode(tools);
 
-    switch (model) {
+async function* generateResponse(prompt, modelKey) {
+    let model;
+
+    // 1. Initialize the correct model based on selection
+    switch (modelKey) {
         case 'gemini-2.5-flash':
-            openai = new OpenAI({
+            model = new ChatOpenAI({
+                model: "gemini-2.5-flash",
                 apiKey: process.env.GEMINI_API_KEY,
-                baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/"
+                configuration: {
+                    baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/"
+                },
+                streaming: true
             });
-            modelNameForAPI = "gemini-2.5-flash";
             break;
 
         case 'longcat-flash-chat':
-            openai = new OpenAI({
+            model = new ChatOpenAI({
+                model: "LongCat-Flash-Chat",
                 apiKey: process.env.LONGCAT_API_KEY,
-                baseURL: "https://api.longcat.chat/openai/v1"
+                configuration: {
+                    baseURL: "https://api.longcat.chat/openai",
+                },
+                streaming: true
             });
-            modelNameForAPI = "longcat-flash-chat";
             break;
 
         case 'longcat-flash-thinking':
-            openai = new OpenAI({
+            model = new ChatOpenAI({
+                model: "LongCat-Flash-Thinking",
                 apiKey: process.env.LONGCAT_API_KEY,
-                baseURL: "https://api.longcat.chat/openai/v1"
+                configuration: {
+                    baseURL: "https://api.longcat.chat/openai",
+                },
+                streaming: true
             });
-            modelNameForAPI = "longcat-flash-thinking";
             break;
 
         default:
-            throw new Error(`Invalid model selected: ${model}`);
+            throw new Error(`Invalid model selected: ${modelKey}`);
     }
 
-    try {
-        let fullReply = "";
+    // Bind tools to the model
+    const modelWithTools = model.bindTools(tools);
 
-        if (chatHistory.length > 10) {
-            chatHistory.shift(); // remove oldest
+    // 2. Define the Agent Node function (closes over modelWithTools)
+    async function callModel(state) {
+        const { messages } = state;
+        // Prepend system message for the specific call (not added to persistent state)
+        const messagesWithSystem = [new SystemMessage(SYSTEM_INSTRUCTION), ...messages];
+        const response = await modelWithTools.invoke(messagesWithSystem);
+        return { messages: [response] };
+    }
+
+    // 3. Define Conditional Logic
+    function shouldContinue(state) {
+        const lastMessage = state.messages[state.messages.length - 1];
+        if (lastMessage.tool_calls && lastMessage.tool_calls.length > 0) {
+            return "tools";
         }
-        // push user message to history
-        chatHistory.push({ role: "user", content: prompt });
-        const response = await openai.chat.completions.create({
-            model: modelNameForAPI,
-            messages: [
-                { role: 'system', content: SYSTEM_INSTRUCTION },
-                ...chatHistory,
-            ],
-            temperature: 0.2, // Lower temperature (e.g., 0.2) is good for code review/consistency
-            stream: true
-        });
+        return "__end__";
+    }
 
-        for await (const chunk of response) {
-            const token = chunk.choices[0]?.delta?.content;
-            if (token) {
-                fullReply += token;
-                yield token; // Yield token to controller
+    // 4. Construct the Graph
+    const workflow = new StateGraph(MessagesAnnotation)
+        .addNode("agent", callModel)
+        .addNode("tools", toolNode)
+        .addEdge("__start__", "agent")
+        .addConditionalEdges("agent", shouldContinue, {
+            tools: "tools",
+            __end__: "__end__"
+        })
+        .addEdge("tools", "agent");
+
+    // 5. Compile the Graph
+    const app = workflow.compile({ checkpointer: checkPointer });
+
+    try {
+        const input = {
+            messages: [new HumanMessage(prompt)],
+        };
+
+        const config = {
+            configurable: { thread_id: "1" }, // Keeping single thread as per original intent
+            version: "v2" // Ensure we use v2 for streamEvents if using newer LangGraph
+        };
+
+        // 6. Stream Events to yield tokens
+        // streamEvents allows us to see internal steps, including the LLM streaming tokens
+        const eventStream = await app.streamEvents(input, config);
+
+        for await (const event of eventStream) {
+            // Check for 'on_chat_model_stream' events from the 'agent' node
+            if (event.event === "on_chat_model_stream" && event.metadata?.langgraph_node === "agent") {
+                const chunk = event.data.chunk;
+                // Yield the content string if present
+                if (chunk && chunk.content) {
+                    yield chunk.content;
+                }
             }
         }
-        chatHistory.push({ role: "assistant", content: fullReply });
 
     } catch (error) {
         console.error('Error interacting with AI:', error);
